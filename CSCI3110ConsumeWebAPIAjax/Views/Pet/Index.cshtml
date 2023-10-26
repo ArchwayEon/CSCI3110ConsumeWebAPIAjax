@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "All Pets";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Weight
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="petTableBody">
+    </tbody>
+</table>
+
+@section Scripts{
+    <script src="~/js/petIndex.js" type="module"></script>
+}
+
