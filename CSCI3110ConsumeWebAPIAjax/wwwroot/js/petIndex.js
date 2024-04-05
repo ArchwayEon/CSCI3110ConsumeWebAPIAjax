@@ -1,12 +1,18 @@
 "use strict";
 
-import { readAll } from "./petRepository.js";
+import { PetRepository } from "./PetRepository.js";
 
-let pets = await readAll();
 const petTableBody = document.querySelector("#petTableBody");
+
+const petRepo = new PetRepository("https://localhost:7219/api/pet");
+let pets = await petRepo.readAll();
 pets.forEach((pet) => {
     petTableBody.appendChild(createTRForPet(pet));
 });
+
+function createTRWithLoadingGIF() {
+    const tr = document.createElement("tr");
+}
 
 function createTRForPet(pet) {
     const tr = document.createElement("tr");

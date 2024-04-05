@@ -1,5 +1,21 @@
 "use strict";
 
+export class PetRepository {
+    #baseAddress;
+    constructor(baseAddress) {
+        this.#baseAddress = baseAddress;
+    }
+
+    async readAll() {
+        const address = `${this.#baseAddress}/all`;
+        const response = await fetch(address);
+        if (!response.ok) {
+            throw new Error("There was an HTTP error getting the pet data.");
+        }
+        return await response.json();
+    }
+}
+
 const baseAddress = "https://localhost:7219/api";
 
 export async function readAll() {
