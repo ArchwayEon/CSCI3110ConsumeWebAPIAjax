@@ -1,10 +1,15 @@
 "use strict";
 
-import { read, update } from "./petRepository.js";
+import { PetRepository } from "./PetRepository.js";
+import { DOMCreator } from "./DOMCreator.js";
+
+const petRepo = new PetRepository("https://localhost:7219/api/pet");
+const domCreator = new DOMCreator();
 
 const petHeading = document.querySelector("#petHeading");
-removeChildren(petHeading);
-petHeading.appendChild(document.createTextNode("Loading..."));
+domCreator.removeChildren(petHeading);
+petHeading.appendChild(
+    domCreator.createImg("/images/ajax-loader.gif", "Loading image"));
 
 const urlSections = window.location.href.split("/");
 const petId = urlSections[5];
@@ -15,7 +20,7 @@ formPetEdit.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(formPetEdit);
     try {
-        await update(formData);
+        await petRepo.update(formData);
         window.location.replace("/pet/index/");
     }
     catch (error) {
@@ -26,14 +31,14 @@ formPetEdit.addEventListener("submit", async (e) => {
 async function populatePetData() {
 
     try {
-        const pet = await read(petId);
+        const pet = await petRepo.read(petId);
         console.log(pet);
 
-        setText("#Id", pet.id);
-        setText("#Name", pet.name);
-        setText("#Weight", pet.weight);
+        domCreator.setElementValue("#Id", pet.id);
+        domCreator.setElementValue("#Name", pet.name);
+        domCreator.setElementValue("#Weight", pet.weight);
 
-        removeChildren(petHeading);
+        domCreator.removeChildren(petHeading);
         petHeading.appendChild(document.createTextNode("Pet"));
     }
     catch (error) {
@@ -42,14 +47,3 @@ async function populatePetData() {
     }
 }
 
-
-function removeChildren(element) {
-    while (element.firstChild) {
-        element.removeChild(element.firstChild);
-    }
-}
-
-function setText(elementId, text) {
-    const element = document.querySelector(elementId);
-    element.value = text;
-}

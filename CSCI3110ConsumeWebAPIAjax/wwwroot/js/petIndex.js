@@ -1,47 +1,36 @@
 "use strict";
 
 import { PetRepository } from "./PetRepository.js";
-
-const petTableBody = document.querySelector("#petTableBody");
+import { DOMCreator } from "./DOMCreator.js";
 
 const petRepo = new PetRepository("https://localhost:7219/api/pet");
+const domCreator = new DOMCreator();
+
+const petTableBody = document.querySelector("#petTableBody");
+petTableBody.appendChild(domCreator.createImageTR("/images/ajax-loader.gif", "Loading image"));
+
 let pets = await petRepo.readAll();
+domCreator.removeChildren(petTableBody);
 pets.forEach((pet) => {
-    petTableBody.appendChild(createTRForPet(pet));
+    petTableBody.appendChild(createPetTR(pet));
 });
 
-function createTRWithLoadingGIF() {
+function createPetTR(pet) {
     const tr = document.createElement("tr");
-}
-
-function createTRForPet(pet) {
-    const tr = document.createElement("tr");
-    tr.appendChild(createTD(pet.id));
-    tr.appendChild(createTD(pet.name));
-    tr.appendChild(createTD(pet.weight));
+    tr.appendChild(domCreator.createTextTD(pet.id));
+    tr.appendChild(domCreator.createTextTD(pet.name));
+    tr.appendChild(domCreator.createTextTD(pet.weight));
     tr.appendChild(createTDWithLinks(pet.id))
     return tr;
 }
 
-function createTD(text) {
-    const td = document.createElement("td");
-    td.appendChild(document.createTextNode(text));
-    return td;
-}
-
 function createTDWithLinks(id) {
     const td = document.createElement("td");
-    td.appendChild(createLink(`/pet/edit/${id}`, "Edit"));
+    td.appendChild(domCreator.createTextLink(`/pet/edit/${id}`, "Edit"));
     td.appendChild(document.createTextNode(" | "));
-    td.appendChild(createLink(`/pet/details/${id}`, "Details"));
+    td.appendChild(domCreator.createTextLink(`/pet/details/${id}`, "Details"));
     td.appendChild(document.createTextNode(" | "));
-    td.appendChild(createLink(`/pet/delete/${id}`, "Delete"));
+    td.appendChild(domCreator.createTextLink(`/pet/delete/${id}`, "Delete"));
     return td;
 }
 
-function createLink(url, text) {
-    const a = document.createElement("a");
-    a.setAttribute("href", url);
-    a.appendChild(document.createTextNode(text));
-    return a;
-}

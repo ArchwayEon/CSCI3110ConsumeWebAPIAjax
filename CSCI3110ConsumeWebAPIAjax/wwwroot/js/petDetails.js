@@ -1,23 +1,23 @@
 "use strict";
 
-import { read } from "./petRepository.js";
+import { PetRepository } from "./PetRepository.js";
+import { DOMCreator } from "./DOMCreator.js";
+
+const petRepo = new PetRepository("https://localhost:7219/api/pet");
+const domCreator = new DOMCreator();
 
 const urlSections = window.location.href.split("/");
 const petId = urlSections[5];
 try {
-    const pet = await read(petId);
+    const pet = await petRepo.read(petId);
     console.log(pet);
 
-    setText("#petId", pet.id);
-    setText("#petName", pet.name);
-    setText("#petWeight", pet.weight);
+    domCreator.setElementText("#petId", pet.id);
+    domCreator.setElementText("#petName", pet.name);
+    domCreator.setElementText("#petWeight", pet.weight);
 }
 catch (error) {
     console.log(error);
     window.location.replace("/pet/index");
 }
 
-function setText(elementId, text) {
-    const element = document.querySelector(elementId);
-    element.appendChild(document.createTextNode(text));
-}
