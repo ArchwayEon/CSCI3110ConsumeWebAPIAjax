@@ -1,9 +1,13 @@
 "use strict";
 
-import { read, deletePet } from "./petRepository.js";
+import { PetRepository } from "./PetRepository.js";
+import { DOMCreator } from "./DOMCreator.js";
+
+const petRepo = new PetRepository("https://localhost:7219/api/pet");
+const domCreator = new DOMCreator();
 
 const petHeading = document.querySelector("#petHeading");
-removeChildren(petHeading);
+domCreator.removeChildren(petHeading);
 petHeading.appendChild(document.createTextNode("Loading..."));
 
 const urlSections = window.location.href.split("/");
@@ -15,7 +19,7 @@ formPetDelete.addEventListener("submit", async (e) => {
     const formData = new FormData(formPetDelete);
 
     try {
-        await deletePet(formData.get("id"));
+        await petRepo.deletePet(formData.get("id"));
         window.location.replace("/pet/index/");
     }
     catch (error) {
@@ -25,13 +29,13 @@ formPetDelete.addEventListener("submit", async (e) => {
 
 async function populatePetData() {
     try {
-        const pet = await read(petId);
-        setText("#petId", pet.id);
-        setText("#petName", pet.name);
-        setText("#petWeight", pet.weight);
-        setValue("#id", pet.id);
+        const pet = await petRepo.read(petId);
+        domCreator.setElementText("#petId", pet.id);
+        domCreator.setElementText("#petName", pet.name);
+        domCreator.setElementText("#petWeight", pet.weight);
+        domCreator.setElementValue("#id", pet.id);
 
-        removeChildren(petHeading);
+        domCreator.removeChildren(petHeading);
         petHeading.appendChild(document.createTextNode("Pet"));
     }
     catch (error) {
@@ -40,18 +44,3 @@ async function populatePetData() {
     }
 }
 
-function removeChildren(element) {
-    while (element.firstChild) {
-        element.removeChild(element.firstChild);
-    }
-}
-
-function setText(elementId, text) {
-    const element = document.querySelector(elementId);
-    element.appendChild(document.createTextNode(text));
-}
-
-function setValue(elementId, text) {
-    const element = document.querySelector(elementId);
-    element.value = text;
-}

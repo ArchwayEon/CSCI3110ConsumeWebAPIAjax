@@ -47,21 +47,23 @@ export class PetRepository {
         }
         return await response.text();
     }
-}
 
-
-
-
-
-
-export async function deletePet(id) {
-    const address = `${baseAddress}/pet/delete/${id}`;
-    const response = await fetch(address, {
-        method: "delete"
-    });
-    if (!response.ok) {
-        throw new Error("There was an HTTP error deleting the pet data.");
+    async deletePet(id) {
+        const address = `${this.#baseAddress}/delete/${id}`;
+        const response = await fetch(address, {
+            method: "delete"
+        });
+        if (!response.ok) {
+            throw new Error("There was an HTTP error deleting the pet data.");
+        }
+        return await response.text();
     }
-    return await response.text();
 }
+
+
+
+
+
+
+
 
